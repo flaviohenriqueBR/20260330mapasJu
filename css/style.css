@@ -1,0 +1,64 @@
+html,
+body{
+
+margin:0;
+
+height:100%;
+
+font-family:Arial,Helvetica,sans-serif;
+
+}
+
+body{
+
+display:flex;
+
+}
+
+#sidebar{
+
+width:300px;
+
+background:white;
+
+padding:20px;
+
+box-shadow:0 0 10px rgba(0,0,0,.15);
+
+overflow:auto;
+
+z-index:1000;
+
+}
+
+#map{
+
+flex:1;
+
+}
+
+select{
+
+width:100%;
+
+padding:8px;
+
+margin-bottom:20px;
+
+}
+
+.legend {
+    background: white;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 18px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.legend i {
+    width: 12px;
+    height: 12px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.8;
+}
