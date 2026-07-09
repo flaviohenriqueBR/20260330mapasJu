@@ -31,10 +31,8 @@ z-index:1000;
 
 }
 
-#map{
-
-flex:1;
-
+#map {
+    width: 100%;
 }
 
 select{
