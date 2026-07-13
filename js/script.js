@@ -8,6 +8,7 @@ let breaks = [];
 let cores = [];
 let numClasses = 3;
 let paletaAtual = "Reds";
+let primeiraCarga = true;
 
 let mapa;
 let camadaGeojson;
@@ -215,16 +216,27 @@ function desenharMapa(reenquadrar = false) {
     }).addTo(mapa);
 
     if (reenquadrar) {
-        enquadrarMapa();
-    }
+
+    enquadrarMapa();
+
+}
 
     criarLegenda();
 
 }
 
+async function mudarCidade() {
+
+    cidadeAtual =
+        document.getElementById("cidade").value;
+
+    await carregarGeojson();
+
+}
+
 function atualizarMapa() {
 
-    if (!camadaGeojson) return;
+    if (!camadaGeojson || !mapa) return;
 
     atualizarClassificacao();
 
@@ -435,18 +447,15 @@ document.addEventListener(
     );
 
         document
-            .getElementById("cidade")
-            .addEventListener(
-                "change",
-                function (e) {
+    .getElementById("cidade")
+    .addEventListener(
+        "change",
+        function () {
 
-                    cidadeAtual =
-                        e.target.value;
+            mudarCidade();
 
-                    carregarGeojson();
-
-                }
-            );
+        }
+    );
 
        document
     .getElementById("classes")
