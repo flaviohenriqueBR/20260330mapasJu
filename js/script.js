@@ -91,7 +91,7 @@ async function carregarGeojson() {
 
     dadosGeo = await resposta.json();
 
-    desenharMapa();
+    desenharMapa(true);
 
 }
 
@@ -150,7 +150,7 @@ function getCor(valor) {
 // ==============================
 //
 
-function desenharMapa() {
+function desenharMapa(reenquadrar = false) {
 
     if (!dadosGeo) return;
 
@@ -203,7 +203,9 @@ function desenharMapa() {
 
     }).addTo(mapa);
 
+    if (reenquadrar) {
     enquadrarMapa();
+    }
 
     criarLegenda();
 
