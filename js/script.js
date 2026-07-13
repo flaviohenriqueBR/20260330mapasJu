@@ -144,19 +144,7 @@ function getCor(valor) {
 
 }
 
-//
-// ==============================
-// DESENHAR MAPA
-// ==============================
-//
-
-function desenharMapa(reenquadrar = false) {
-
-    if (!dadosGeo) return;
-
-    if (camadaGeojson) {
-        mapa.removeLayer(camadaGeojson);
-    }
+function atualizarClassificacao() {
 
     const valores = dadosGeo.features
         .map(f => f.properties[indicadorAtual])
@@ -171,9 +159,27 @@ function desenharMapa(reenquadrar = false) {
         breaks.length - 1
     );
 
+}
+
+//
+// ==============================
+// DESENHAR MAPA
+// ==============================
+//
+
+function desenharMapa(reenquadrar = false) {
+
+    if (!dadosGeo) return;
+
+    atualizarClassificacao();
+
+    if (camadaGeojson) {
+        mapa.removeLayer(camadaGeojson);
+    }
+
     camadaGeojson = L.geoJSON(dadosGeo, {
 
-        style: function (feature) {
+        style: function(feature) {
 
             const valor =
                 feature.properties[indicadorAtual];
@@ -187,15 +193,20 @@ function desenharMapa(reenquadrar = false) {
 
         },
 
-        onEachFeature: function (
+        onEachFeature: function(
             feature,
             layer
         ) {
 
+            const valor =
+                feature.properties[indicadorAtual];
+
             layer.bindPopup(`
                 <b>${feature.properties.locais_agregados || "Local"}</b><br>
                 ${indicadorAtual}: ${
-                    Number(feature.properties[indicadorAtual]).toFixed(2)
+                    valor != null
+                        ? Number(valor).toFixed(2)
+                        : "-"
                 }
             `);
 
@@ -204,8 +215,51 @@ function desenharMapa(reenquadrar = false) {
     }).addTo(mapa);
 
     if (reenquadrar) {
-    enquadrarMapa();
+        enquadrarMapa();
     }
+
+    criarLegenda();
+
+}
+
+function atualizarMapa() {
+
+    if (!camadaGeojson) return;
+
+    atualizarClassificacao();
+
+    camadaGeojson.setStyle(function(feature) {
+
+        const valor =
+            feature.properties[indicadorAtual];
+
+        return {
+            color: "#555",
+            weight: 1,
+            fillOpacity: 0.7,
+            fillColor: getCor(valor)
+        };
+
+    });
+
+    camadaGeojson.eachLayer(function(layer) {
+
+        const props =
+            layer.feature.properties;
+
+        const valor =
+            props[indicadorAtual];
+
+        layer.bindPopup(`
+            <b>${props.locais_agregados || "Local"}</b><br>
+            ${indicadorAtual}: ${
+                valor != null
+                    ? Number(valor).toFixed(2)
+                    : "-"
+            }
+        `);
+
+    });
 
     criarLegenda();
 
@@ -367,18 +421,18 @@ document.addEventListener(
         carregarGeojson();
 
         document
-            .getElementById("indicador")
-            .addEventListener(
-                "change",
-                function (e) {
+    .getElementById("indicador")
+    .addEventListener(
+        "change",
+        function (e) {
 
-                    indicadorAtual =
-                        e.target.value;
+            indicadorAtual =
+                e.target.value;
 
-                    desenharMapa();
+            atualizarMapa();
 
-                }
-            );
+        }
+    );
 
         document
             .getElementById("cidade")
@@ -394,33 +448,33 @@ document.addEventListener(
                 }
             );
 
+       document
+    .getElementById("classes")
+    .addEventListener(
+        "change",
+        function (e) {
+
+            numClasses =
+                +e.target.value;
+
+            atualizarMapa();
+
+        }
+    );
+
         document
-            .getElementById("classes")
-            .addEventListener(
-                "change",
-                function (e) {
+    .getElementById("paleta")
+    .addEventListener(
+        "change",
+        function (e) {
 
-                    numClasses =
-                        +e.target.value;
+            paletaAtual =
+                e.target.value;
 
-                    desenharMapa();
+            atualizarMapa();
 
-                }
-            );
-
-        document
-            .getElementById("paleta")
-            .addEventListener(
-                "change",
-                function (e) {
-
-                    paletaAtual =
-                        e.target.value;
-
-                    desenharMapa();
-
-                }
-            );
+        }
+    );
 
         document
             .getElementById("baixarMapa")
